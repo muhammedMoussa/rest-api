@@ -12,16 +12,36 @@ module.exports = function(Product) {
     * Return true if input is > 0
     * @param {number} quantity Number to validate
     */
-
     Product.prototype.buy = function(quantity, callback) {
-      // var result = { quantity };
       if(!isQuantity(quantity)) {
         return callback(`Invalid quantity ${quantity}`)
       }
       const result = {
         status: `Great!, You bought ${quantity} products`
       };
-      // TODO
       callback(null, result);
     };
+
+    // Validate min length of the name
+    Product.validatesLengthOf('name', {
+      min: 3,
+      message: {
+        min: 'Name should be at least 3 chars'
+      }
+    })
+
+    // Validate the name to be unique
+    Product.validatesUniquenessOf('name')
+
+    const positiveInt = /^[0-9]*$/;
+
+    const validatesPositiveInt = function(err){
+      if(!positiveInt.test(this.price)) {
+        err()
+      }
+    }
+
+    Product.validate('price', validatesPositiveInt, {
+      message: 'Price should be a positive number'
+    })
 };
